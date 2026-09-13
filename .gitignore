@@ -1,0 +1,17 @@
+# Zig
+.zig-cache/
+zig-out/
+
+# Frontend (added later)
+frontend/node_modules/
+frontend/dist/
+
+# Editor
+*.swp
+*~
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
