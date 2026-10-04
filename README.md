@@ -1,7 +1,7 @@
 # tom
 
-Local e-book manager with a browser-based UI. Manages an EPUB/PDF library
-on disk, serves a catalog and reader interface over HTTP on `localhost`.
+Local e-book management tool with a browser-based UI. 
+Manages an EPUB/PDF library on disk, serves a catalog and reader interface over HTTP on `localhost`.
 
 **Status:** early development — nothing works yet.
 
@@ -16,7 +16,7 @@ on disk, serves a catalog and reader interface over HTTP on `localhost`.
 ## Tech
 
 - **Backend:** Zig 0.16, SQLite (via `translate-c`), `std.http`
-- **Frontend:** Svelte, Vite, TypeScript — embedded into the binary at build time
+- **Frontend (potentially):** Svelte, Vite, TypeScript — embedded into the binary at build time
 
 ## Build
 
@@ -33,8 +33,10 @@ zig build run    # start the server
 ```
 src/           Zig source
 frontend/      Svelte/Vite UI (added in a later phase)
-testdata/      Fixture files for tests
+testdata/      Fixture files for tests (added in a later phase)
+LICENSE        License file
 PLAN.md        Phased development plan
+README.md      This file
 ```
 
 ## License

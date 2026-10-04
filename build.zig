@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const lib_mod = b.addModule("tom", .{
-        .root_source_file = b.path("src/root.zig"),
+        .root_source_file = b.path("src/db.zig"),
         .target = target,
         .optimize = optimize,
         .imports = &.{

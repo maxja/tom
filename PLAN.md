@@ -1,9 +1,7 @@
-# Tom — Phased Development Plan
+# tom — Phased Development Plan
 
 > Cross-platform local daemon + browser-based e-book manager.
 > Zig 0.16 backend, Svelte/Vite frontend, SQLite storage.
-
----
 
 ## Design Decisions
 
@@ -25,15 +23,16 @@ numeric `book_id` to disambiguate collisions.
 ### Native schema (not Calibre)
 
 ```sql
-books        (id, title, sort_title, isbn, language, publisher,
-              pub_date, description, date_added, date_modified)
-authors      (id, name, sort_name)
-series       (id, name)
-tags         (id, name)
-book_authors (book_id, author_id, ordinal)   -- ordered many-to-many
-book_series  (book_id, series_id, position)  -- book can appear in multiple series
-book_tags    (book_id, tag_id)
-formats      (id, book_id, format, file_path, file_size, file_hash)
+books             (id, title, sort_title, isbn, language, publisher,
+                  pub_date, date_added, date_modified)
+book_descriptions (book_id, description)
+authors           (id, name, sort_name)
+series            (id, name)
+tags              (id, name)
+book_authors      (book_id, author_id, ordinal)   -- ordered many-to-many
+book_series       (book_id, series_id, position)  -- book can appear in multiple series
+book_tags         (book_id, tag_id)
+formats           (id, book_id, format, file_path, file_size, file_hash)
 ```
 
 Editions of the same work are separate `books` rows (different ISBN). A future
@@ -45,8 +44,6 @@ Editions of the same work are separate `books` rows (different ISBN). A future
 |---------|----------|
 | Dev     | Zig serves `/api/*`, Vite dev server serves frontend (proxy or separate port) |
 | Release | `build.zig` runs `npm run build`, embeds `dist/` via `@embedFile` into a single binary |
-
----
 
 ## Dependency Strategy
 
@@ -61,8 +58,6 @@ Editions of the same work are separate `books` rows (different ISBN). A future
 No vendored source files from other projects. Everything comes through Zig's
 package manager, npm, or CI-downloaded verified archives.
 
----
-
 ## CI Progression
 
 | After Phase | CI Addition |
@@ -72,8 +67,6 @@ package manager, npm, or CI-downloaded verified archives.
 | 5 | API lifecycle test: import → search → edit → delete |
 | 6 | `npm ci && npm run build && zig build -Drelease test` |
 | 8 | Multi-format import test |
-
----
 
 ## Phase 0 — Toolchain Spike & Project Scaffold
 
@@ -105,8 +98,6 @@ logic.
 > *The `/health` endpoint and test table are throwaway scaffolding. They exist
 > solely to prove the toolchain.*
 
----
-
 ## Phase 1 — Native Schema & Storage Layer
 
 **Goal:** Solid data-access layer with tested CRUD. No HTTP beyond the Phase 0
@@ -131,8 +122,6 @@ health endpoint.
 
 **Deliverable:** `zig build test` exercises all repository operations against
 in-memory SQLite.
-
----
 
 ## Phase 2 — EPUB Metadata Parser
 
@@ -162,8 +151,6 @@ metadata extraction.
 > *The XML parser can be minimal and purpose-built for OPF-shaped documents. It
 > is acceptable to harden or replace it later.*
 
----
-
 ## Phase 3 — Library Filesystem & Ingest Pipeline
 
 **Goal:** End-to-end import: file in → metadata parsed → file copied to
@@ -189,8 +176,6 @@ library tree → record in DB.
 directory with correct structure. Result inspectable via `sqlite3` CLI.
 
 **CI:** Integration test that imports fixtures and asserts DB state + file tree.
-
----
 
 ## Phase 4 — HTTP API: Read Path
 
@@ -218,8 +203,6 @@ directory with correct structure. Result inspectable via `sqlite3` CLI.
 
 **Deliverable:** `zig build run -- serve --library-path ./testlib` → browse
 library via curl.
-
----
 
 ## Phase 5 — HTTP API: Write Path & Full-Text Search
 
@@ -250,8 +233,6 @@ covers all endpoints.
 **CI:** Integration test exercising the full API lifecycle (import → search →
 edit → delete).
 
----
-
 ## Phase 6 — Minimal Web UI: Catalog Shell
 
 **Goal:** First browser-usable interface. Read-only catalog browsing.
@@ -278,8 +259,6 @@ in a grid. Single binary, no external files needed.
 
 **CI:** `npm ci && npm run build && zig build -Drelease test`.
 
----
-
 ## Phase 7 — Web UI: Search, Filters & Detail Panel
 
 **Goal:** Usable library management entirely in the browser.
@@ -302,8 +281,6 @@ in a grid. Single binary, no external files needed.
 
 **Deliverable:** End-to-end in browser: search → click book → view details →
 edit metadata → save. Upload new books via drag-and-drop.
-
----
 
 ## Phase 8 — PDF Support & Multi-Format Handling
 
@@ -333,8 +310,6 @@ badges. Download either format.
 > manually correct on import — this is already supported by the edit UI from
 > Phase 7.*
 
----
-
 ## Phase 9 — In-Browser EPUB Reader
 
 **Goal:** Read EPUBs without leaving the browser.
@@ -355,8 +330,6 @@ badges. Download either format.
 
 **Deliverable:** Click "Read" → read an EPUB in the browser with basic
 controls. Position remembered across sessions (client-side).
-
----
 
 ## Phase 10 — SSE Event Stream & Background Jobs
 
@@ -380,8 +353,6 @@ controls. Position remembered across sessions (client-side).
 **Deliverable:** Drag-drop a batch of files → progress bar fills via SSE →
 catalog updates live.
 
----
-
 ## Phase 11 — Calibre Compatibility Layer
 
 **Goal:** Users with existing Calibre libraries can browse or migrate them.
@@ -403,8 +374,6 @@ catalog updates live.
 existing Calibre library in the browser (read-only). Or migrate it
 permanently with `tom migrate`.
 
----
-
 ## Future Phases (out of current scope)
 
 | Phase | Feature | Notes |
@@ -415,8 +384,6 @@ permanently with `tom migrate`.
 | 15 | WAMR plugin runtime | Sandboxed WASM extensions |
 | 16 | Multi-user & auth | JWT / session, per-user shelves, LAN sharing |
 | 17 | Windows support | `std.Io` backend differences, installer |
-
----
 
 ## Summary
 
