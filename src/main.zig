@@ -3,10 +3,12 @@ const tom = @import("tom");
 const Http = @import("http.zig").Http;
 
 pub fn main(init: std.process.Init) !void {
+    // Init database
     var db = try tom.Db.openInMemory();
     defer db.close();
     std.debug.print("sqlite ok\n", .{});
 
+    // Init server
     var port: u16 = 9000;
     var args = init.minimal.args.iterate();
     _ = args.skip(); // skip argv[0] (program name)
