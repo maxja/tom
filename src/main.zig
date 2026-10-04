@@ -1,30 +1,16 @@
 const std = @import("std");
-const tom = @import("tom");
-const Http = @import("http.zig").Http;
 
 pub fn main(init: std.process.Init) !void {
-    // Init database
-    var db = try tom.Db.openInMemory();
-    defer db.close();
-    std.debug.print("sqlite ok\n", .{});
-
-    // Init server
-    var port: u16 = 9000;
     var args = init.minimal.args.iterate();
-    _ = args.skip(); // skip argv[0] (program name)
-    while (args.next()) |arg| {
-        if (std.mem.eql(u8, arg, "--port")) {
-            if (args.next()) |port_str| {
-                port = std.fmt.parseInt(u16, port_str, 10) catch blk: {
-                    std.debug.print("Warning: invalid port '{s}', using {d}\n", .{ port_str, port });
-                    break :blk port;
-                };
-            }
-        }
-    }
 
-    std.debug.print("Starting server on port {d}...\n", .{port});
+    _ = args.next();
+    const ip = args.next() orelse "127.0.0.1";
+    const port = args.next() orelse "8080";
 
-    const server = Http.open(port);
-    try server.run(init.io);
+    const port_num = std.fmt.parseInt(u16, port, 10) catch {
+        std.debug.print("invalid port, must be a number: {s}\n", .{port});
+        return error.InvalidPort;
+    };
+
+    std.debug.print("tom is serving on {s}:{d}\n", .{ ip, port_num });
 }
