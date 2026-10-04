@@ -1,0 +1,27 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: zig build test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mlugg/setup-zig@v2
+        with:
+          zig-version: 0.16.0
+
+      - name: Fetch dependencies
+        run: zig build --fetch
+
+      - name: Build
+        run: zig build
+
+      - name: Test
+        run: zig build test
